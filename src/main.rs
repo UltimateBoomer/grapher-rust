@@ -1,6 +1,6 @@
-use grapher::{draw_2d, func_true};
+use grapher::{TrueGrapher, Draw, CircleGrapher};
 
 fn main() {
-    let result = draw_2d(&func_true, 10).unwrap();
+    let result = CircleGrapher::draw_2d(10).unwrap();
     println!("{}", result);
 }

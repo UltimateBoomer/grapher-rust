@@ -35,6 +35,9 @@ pub struct TrueGrapher;
 /// Draws the distance to origin
 pub struct DistToGrapher;
 
+/// Draws the sum of inputs
+pub struct AddGrapher;
+
 impl Draw for TrueGrapher {
     #[inline]
     fn apply(&self, _n: &[f32]) -> f32 {
@@ -46,5 +49,12 @@ impl Draw for DistToGrapher {
     #[inline]
     fn apply(&self, n: &[f32]) -> f32 {
         n.iter().map(|x| x.powi(2)).sum::<f32>().sqrt()
+    }
+}
+
+impl Draw for AddGrapher {
+    #[inline]
+    fn apply(&self, n: &[f32]) -> f32 {
+        n.iter().sum()
     }
 }

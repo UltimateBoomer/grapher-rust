@@ -1,18 +1,18 @@
 use std::error::Error;
-
 use ndarray::{Array2, ArrayBase};
+use num::{Float, traits::AsPrimitive};
 
-pub trait Draw {
+pub trait Draw<T: Float + 'static> {
     /// Applies the graph function to `n`.
     /// Inline of possible.
-    fn apply(&self, n: &[f32]) -> f32;
+    fn apply(&self, n: &[T]) -> T;
 
     /// Produces a 2D array of values received from graphing.
     fn draw_2d(
         &self,
         size: (usize, usize),
-        bounds: (f32, f32, f32, f32),
-    ) -> Result<Array2<f32>, Box<dyn Error>> {
+        bounds: (T, T, T, T),
+    ) -> Result<Array2<T>, Box<dyn Error>> where usize: AsPrimitive<T> {
         let (xa, ya, xb, yb) = bounds;
         let xr = xb - xa;
         let yr = yb - ya;
@@ -20,8 +20,8 @@ pub trait Draw {
 
         let mut result = ArrayBase::zeros(size);
         result.indexed_iter_mut().for_each(|((x, y), n)| {
-            let x = x as f32 / size_x as f32 * xr + xa;
-            let y = y as f32 / size_y as f32 * yr + ya;
+            let x = x.as_() / size_x.as_() * xr + xa;
+            let y = y.as_() / size_y.as_() * yr + ya;
             *n = self.apply(&[x, y]);
         });
 
@@ -38,21 +38,21 @@ pub struct DistToGrapher;
 /// Draws the sum of inputs
 pub struct AddGrapher;
 
-impl Draw for TrueGrapher {
+impl Draw<f32> for TrueGrapher {
     #[inline]
     fn apply(&self, _n: &[f32]) -> f32 {
         1.0
     }
 }
 
-impl Draw for DistToGrapher {
+impl Draw<f32> for DistToGrapher {
     #[inline]
     fn apply(&self, n: &[f32]) -> f32 {
         n.iter().map(|x| x.powi(2)).sum::<f32>().sqrt()
     }
 }
 
-impl Draw for AddGrapher {
+impl Draw<f32> for AddGrapher {
     #[inline]
     fn apply(&self, n: &[f32]) -> f32 {
         n.iter().sum()

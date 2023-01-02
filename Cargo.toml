@@ -12,6 +12,7 @@ harness = false
 [dependencies]
 ndarray = {version = "*", features = ["rayon"]}
 rayon = "*"
+num = "*"
 
 [dev-dependencies]
 criterion = "*"

@@ -1,7 +1,7 @@
 use grapher::*;
 
 fn main() {
-    let grapher = CircleGrapher { radius: 1.0 };
-    let result = grapher.draw_2d(10).unwrap();
-    println!("{}", result);
+    let grapher = DistToGrapher;
+    let result = grapher.draw_2d((10, 10), (-1.0, -1.0, 1.0, 1.0)).unwrap();
+    println!("{:.3}", result);
 }

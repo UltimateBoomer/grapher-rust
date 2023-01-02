@@ -3,10 +3,10 @@ use grapher::*;
 
 pub fn bench(c: &mut Criterion) {
     c.bench_function("TrueGrapher draw_2d", |b| {
-        b.iter(|| TrueGrapher {}.draw_2d(500))
+        b.iter(|| TrueGrapher.draw_2d((500, 500), (-1.0, -1.0, 1.0, 1.0)))
     });
-    c.bench_function("CircleGrapher draw_2d", |b| {
-        b.iter(|| CircleGrapher { radius: 1.0 }.draw_2d(500))
+    c.bench_function("DistToGrapher draw_2d", |b| {
+        b.iter(|| DistToGrapher.draw_2d((500, 500), (-1.0, -1.0, 1.0, 1.0)))
     });
 }
 

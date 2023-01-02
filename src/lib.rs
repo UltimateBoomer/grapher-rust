@@ -3,13 +3,25 @@ use std::error::Error;
 use ndarray::{Array2, ArrayBase};
 
 pub trait Draw {
+    /// Applies the graph function to `n`.
+    /// Inline of possible.
     fn apply(&self, n: &[f32]) -> f32;
 
-    fn draw_2d(&self, size: usize) -> Result<Array2<f32>, Box<dyn Error>> {
-        let mut result = ArrayBase::zeros([size, size]);
+    /// Produces a 2D array of values received from graphing.
+    fn draw_2d(
+        &self,
+        size: (usize, usize),
+        bounds: (f32, f32, f32, f32),
+    ) -> Result<Array2<f32>, Box<dyn Error>> {
+        let (xa, ya, xb, yb) = bounds;
+        let xr = xb - xa;
+        let yr = yb - ya;
+        let (size_x, size_y) = size;
+
+        let mut result = ArrayBase::zeros(size);
         result.indexed_iter_mut().for_each(|((x, y), n)| {
-            let x = x as f32;
-            let y = y as f32;
+            let x = x as f32 / size_x as f32 * xr + xa;
+            let y = y as f32 / size_y as f32 * yr + ya;
             *n = self.apply(&[x, y]);
         });
 
@@ -17,10 +29,11 @@ pub trait Draw {
     }
 }
 
+/// Draws value `1.0` for all inputs.
 pub struct TrueGrapher;
-pub struct CircleGrapher {
-    pub radius: f32,
-}
+
+/// Draws the distance to origin
+pub struct DistToGrapher;
 
 impl Draw for TrueGrapher {
     #[inline]
@@ -29,9 +42,9 @@ impl Draw for TrueGrapher {
     }
 }
 
-impl Draw for CircleGrapher {
+impl Draw for DistToGrapher {
     #[inline]
     fn apply(&self, n: &[f32]) -> f32 {
-        self.radius - n.iter().map(|x| x.powf(2.0)).sum::<f32>()
+        n.iter().map(|x| x.powi(2)).sum::<f32>().sqrt()
     }
 }

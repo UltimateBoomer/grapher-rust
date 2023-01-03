@@ -1,3 +1,4 @@
 /target
 .*
 !.gitignore
+/src/main.rs

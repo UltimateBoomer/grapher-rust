@@ -12,10 +12,13 @@ pub fn bench(c: &mut Criterion) {
         b.iter(|| AddGrapher.draw_2d((500, 500), (-1.0, -1.0, 1.0, 1.0)))
     });
     c.bench_function("MandelbrotGrapher draw_2d", |b| {
-        b.iter(|| MandelbrotGrapher {
-            iterations: 10,
-            cutoff: 1.0 as f32,
-        }.draw_2d((500, 500), (-1.0, -1.0, 1.0, 1.0)))
+        b.iter(|| {
+            MandelbrotGrapher {
+                iterations: 10,
+                cutoff: 1.0 as f32,
+            }
+            .draw_2d((500, 500), (-1.0, -1.0, 1.0, 1.0))
+        })
     });
 }
 

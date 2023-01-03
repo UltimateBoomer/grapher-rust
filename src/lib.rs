@@ -1,9 +1,14 @@
-use std::{error::Error, ops::{AddAssign, SubAssign, MulAssign, DivAssign, RemAssign}};
 use ndarray::{Array2, ArrayBase};
-use num::{Float, Complex, Zero, FromPrimitive};
+use num::{Complex, Float, FromPrimitive, Zero};
+use std::{
+    error::Error,
+    ops::{AddAssign, DivAssign, MulAssign, RemAssign, SubAssign},
+};
 
+/// This trait allows one to compute values for n-dimensional targets.
+/// By implementing this trait, this takes advantage of Rust's static optimization to achieve zero-cost abstraction. The `apply` function can be inlined to improve efficiency.
 pub trait Draw<T: Float + 'static + FromPrimitive> {
-    /// Applies the graph function to `n`.
+    /// Applies the graph function to coordinate `n`.
     /// Inline of possible.
     fn apply(&self, n: &[T]) -> T;
 
@@ -29,16 +34,16 @@ pub trait Draw<T: Float + 'static + FromPrimitive> {
     }
 }
 
-/// Draws value `0.0` for all inputs.
+/// This grapher produces zero for all inputs.
 pub struct ZeroGrapher;
 
-/// Draws the distance to origin
+/// This grapher produces the distance to origin of the vector formed by the input.
 pub struct DistToGrapher;
 
-/// Draws the sum of inputs
+/// This grapher produces the sum of inputs.
 pub struct AddGrapher;
 
-/// Draws the mandelbrot set in depth
+/// This grapher produces the value of the corresponding point in the mandelbrot set.
 pub struct MandelbrotGrapher<T: Float> {
     pub iterations: usize,
     pub cutoff: T,
@@ -65,14 +70,17 @@ impl Draw<f32> for AddGrapher {
     }
 }
 
-impl<T: Float + 'static + FromPrimitive + AddAssign + SubAssign + MulAssign + DivAssign + RemAssign> Draw<T> for MandelbrotGrapher<T> {
+impl<
+        T: Float + 'static + FromPrimitive + AddAssign + SubAssign + MulAssign + DivAssign + RemAssign,
+    > Draw<T> for MandelbrotGrapher<T>
+{
     #[inline]
     fn apply(&self, n: &[T]) -> T {
         let mut z = Complex::<T>::zero();
         let c = Complex::new(n[0], n[1]);
         for i in 0..self.iterations {
             if z.re.abs() > self.cutoff || z.im.abs() > self.cutoff {
-                return T::from(i).unwrap()
+                return T::from(i).unwrap();
             }
             z += c;
         }

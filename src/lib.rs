@@ -46,9 +46,8 @@ pub struct DistToGrapher;
 pub struct AddGrapher;
 
 /// This grapher produces the value of the corresponding point in the mandelbrot set.
-pub struct MandelbrotGrapher<T: NdFloat> {
+pub struct MandelbrotGrapher {
     pub iterations: usize,
-    pub cutoff: T,
 }
 
 impl<T: NdFloat> Grapher<T> for ZeroGrapher {
@@ -72,19 +71,17 @@ impl Grapher<f32> for AddGrapher {
     }
 }
 
-impl<T: NdFloat> Grapher<T> for MandelbrotGrapher<T>
-{
+impl<T: NdFloat> Grapher<T> for MandelbrotGrapher {
     #[inline]
     fn apply(&self, n: &[T]) -> T {
         let mut z = Complex::<T>::zero();
         let c = Complex::new(n[0], n[1]);
         for i in 0..self.iterations {
-            // Don't calculate actual distance to improve performance
-            if z.re.abs() > self.cutoff || z.im.abs() > self.cutoff {
-                return T::from(i).unwrap() / T::from(self.iterations).unwrap();
+            if z.norm_sqr() > T::from(4).unwrap() {
+                return T::from(i).unwrap();
             }
-            z += c;
+            z = z * z + c;
         }
-        T::from(self.iterations).unwrap() / T::from(self.iterations).unwrap()
+        T::zero()
     }
 }

@@ -13,6 +13,7 @@ harness = false
 ndarray = {version = "*", features = ["rayon"]}
 rayon = "*"
 num = "*"
+image = "*"
 
 [dev-dependencies]
 criterion = "*"

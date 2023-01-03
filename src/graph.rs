@@ -2,6 +2,10 @@ use std::{io::{Write}, error::Error};
 
 use ndarray::{Axis, Array2};
 
+pub trait Plotter2D {
+    fn plot_2d(&mut self, graph: Array2<f32>) -> Result<(), Box<dyn Error>>;
+}
+
 pub struct WritePlotter<W> {
     writer: W,
 }
@@ -10,8 +14,10 @@ impl<W: Write> WritePlotter<W> {
     pub fn new(writer: W) -> WritePlotter<W> {
         WritePlotter { writer: writer }
     }
+}
 
-    pub fn plot_2d(&mut self, graph: Array2<f32>) -> Result<(), Box<dyn Error>> {
+impl<W: Write> Plotter2D for WritePlotter<W> {
+    fn plot_2d(&mut self, graph: Array2<f32>) -> Result<(), Box<dyn Error>> {
         graph.axis_iter(Axis(0)).map(|a| {
             let row: String = a.iter().map(|n| {
                 let n = n.abs();
@@ -24,4 +30,8 @@ impl<W: Write> WritePlotter<W> {
             Ok(())
         }).collect()
     }
+}
+
+pub struct ImagePlotter {
+
 }

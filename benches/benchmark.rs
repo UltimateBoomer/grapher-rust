@@ -15,7 +15,7 @@ pub fn bench(c: &mut Criterion) {
         b.iter(|| {
             MandelbrotGrapher {
                 iterations: 10,
-            }
+                }
             .draw_2d((500, 500), (-1.0, -1.0, 1.0, 1.0))
         })
     });
